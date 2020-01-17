@@ -1,6 +1,6 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import logo from '../svg/logo.svg';
+import '../sass/App.scss';
 
 function App() {
   return (
