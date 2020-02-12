@@ -1,17 +1,42 @@
 import React from 'react';
+import Form from "react-jsonschema-form";
+
+const formSchema = {
+  required: [],
+  title: "Fill out project info:",
+  type: "object",
+  properties: {
+    teamnames: { type: "string", title: "Team names" },
+    link: { type: "string", title: "Link" },
+  }
+};
+
+const uiSchema = {
+  teamnames: {
+    "ui:widget": "textarea",
+    "ui:placeholder":
+      "Your team members' names separated by commas"
+  },
+  link: {
+    "ui:placeholder":
+      "Link to devpost project"
+  }
+};
+
+const log = type => console.log.bind(console, type);
 
 class Submit extends React.Component {
   render() {
     return (
       <div id="submit">
         <div className="content">
-          <h1>Steps to submit</h1>
+          <h1>Submit your project here!</h1>
           <h2>Step 1</h2>
             <p>
               Open <a href="devpost.com">devpost.com</a> and make a submission.
             </p>
           <h2>Step 2</h2>
-            <SubmitForm />
+          <SubmitForm />
           <h2>Step 3</h2>
             <p>
               Check back on <a href="#">something.treehacks.com</a> for your table number!
@@ -25,18 +50,15 @@ class Submit extends React.Component {
 class SubmitForm extends React.Component {
   render() {
     return (
-      <form>
-        <p>
-          Put your teammates' names here (separated by commas):
-        </p>
-        <NameInput />
-        <p>
-          And paste the devpost link here:
-        </p>
-        <LinkInput />
-        <br></br>
-        <button className="main-button">Submit</button>
-      </form>
+      <div class="form">
+        <Form
+          schema={formSchema}
+          uiSchema={uiSchema}
+          onChange={log("changed")}
+          onSubmit={e => this.submitForm(e)}
+          onError={log("errors")}
+        />
+      </div>
     );
   }
 }

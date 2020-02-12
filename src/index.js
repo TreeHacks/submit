@@ -90,20 +90,22 @@ function Main() {
   }, []);
 
   return (
-    <div id="menu">
-      <div id="page-elems">
-        <li id="navbar-logo">
-          <a href="/">
-            <img src={logo} alt="treehacks small logo" />
-            <div id="title">
-              <span className="logo-text-tree">tree</span>
-              <span className="logo-text-hacks">hacks</span>
-              <span className="logo-text-meet">submit</span>
-            </div>
-          </a>
-        </li>
-        <a href="/">submit</a>
-        <a href="#" onClick={logout}>log out</a>
+    <div>
+      <div id="menu">
+        <div id="page-elems">
+          <li id="navbar-logo">
+            <a href="/">
+              <img src={logo} alt="treehacks small logo" />
+              <div id="title">
+                <span className="logo-text-tree">tree</span>
+                <span className="logo-text-hacks">hacks</span>
+                <span className="logo-text-meet">submit</span>
+              </div>
+            </a>
+          </li>
+          <a href="/">submit</a>
+          <a href="#" onClick={logout}>log out</a>
+        </div>
       </div>
       <Submit />
     </div>

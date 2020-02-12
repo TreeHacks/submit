@@ -1,26 +1,68 @@
 #submit {
-  height: 100vh;
+  height: calc(100vh - 100px);
+  padding-top: 100px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .content {
-    background-color: $box-color;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px 0 #e4e4e4;
-    width: 50vw;
+  h2 {
+    margin-top: $medium-space;
   }
 
-  input {
-    border-radius: 8px;
+  .form {
+    margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    border: solid $gray 1px;
     font-size: $base-font-size;
-    height: $base-font-size;
-    width: 300px;
-  }
+    border: none;
 
-  .main-button {
-    margin-top: 15px;
+    #root {
+      border: none;
+    }
+
+    .field-string label {
+      display: none;
+    }
+
+    .field-boolean label {
+      padding: 0 10px;
+      span {
+        padding-left: 5px;
+      }
+    }
+
+    .control-label {
+      margin: 5px;
+    }
+
+    .form-group {
+      margin-top: $small-space;
+    }
+
+    .form-control,
+    .field-array {
+      background-color: $box-color;
+      color: $text-color;
+      border-width: 0px;
+      border-radius: 5px;
+      box-shadow: 0 0 0 1px #ced4da;
+      padding: 6px 10px 3px;
+      font-size: 20px;
+      line-height: 1.5;
+      transition: $transition-speed;
+      width: 70vw;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px $primary-color;
+      }
+    }
   }
 }
