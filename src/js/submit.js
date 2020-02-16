@@ -89,10 +89,10 @@ const Submit = (user) => {
   if (loading) {
     return <Loading />;
   }
-  const defaultSubmitInfo = (profile.first_name && profile.last_name) ? {
+  const defaultSubmitInfo = (profile && profile.first_name && profile.last_name) ? {
     members: [profile.first_name + " " + profile.last_name]
   }: {};
-  const submitted = submitInfo.members && submitInfo.members.length && submitInfo.url;
+  const submitted = submitInfo && submitInfo.members && submitInfo.members.length && submitInfo.url;
   return (
     <div id="submit">
       <div className="content">
