@@ -107,7 +107,7 @@ const Submit = (user) => {
             schema={formSchema}
             uiSchema={uiSchema}
             showErrorList={false}
-            formData={submitInfo ? submitInfo : defaultSubmitInfo}
+            formData={submitted ? submitInfo : defaultSubmitInfo}
             // onChange={e => setSubmitInfo(e.formData)}
             onSubmit={e => submitForm(e.formData)}
             fields={{ "treehacks:multiselect": MultiselectField }}
