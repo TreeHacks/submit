@@ -1,95 +1,113 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Form from "react-jsonschema-form";
 import API from "@aws-amplify/api";
+import { useState, useEffect } from 'react';
+import Loading from './Loading';
+import CreatableSelect from "react-select/creatable";
+
+const MultiselectField = ({ formData, uiSchema, onChange }) => {
+  return (<>
+    <label>Team names (first and last)</label>
+    <CreatableSelect
+      isMulti
+      placeholder={uiSchema["ui:placeholder"]}
+      onChange={e => onChange((e || []).map(item => item.value))}
+      value={(formData || []).map(e => ({ value: e, label: e }))}
+      options={[]}
+      formatCreateLabel={e => `${e}`}
+      noOptionsMessage={() => null}
+    />
+  </>);
+}
 
 const formSchema = {
   required: [],
   title: "Fill out project info:",
   type: "object",
   properties: {
-    teamnames: { type: "string", title: "Team names" },
-    link: { type: "string", title: "Link" },
-  }
+    members: { type: "array", title: "Team names", items: { type: "string" } },
+    url: { type: "string", format: "url", title: "Devpost Link" },
+  },
+  required: ["members", "url"]
 };
 
 const uiSchema = {
-  teamnames: {
-    "ui:placeholder":
-      "Your team members' names separated by commas",
-    "ui:widget": "textarea"
+  members: {
+    "ui:field": "treehacks:multiselect"
   },
-  link: {
+  url: {
     "ui:placeholder":
-      "Paste link to devpost project"
+      "Paste link to Devpost project"
   }
 };
 
-const log = type => console.log.bind(console, type);
-
-class Submit extends React.Component {
-  render() {
-    return (
-      <div id="submit">
-        <div className="content">
-          <h1>Submit your project here!</h1>
-          <h2>Step 1</h2>
-            <p>
-              Open <a href="https://treehacks-2020.devpost.com" target="_blank">Devpost</a> and make a submission.
+const Submit = (user) => {
+  const username = user.user.username;
+  const [profile, setProfile] = useState(null);
+  const [submitInfo, setSubmitInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const profile = await API.get("treehacks", `/user_profile`);
+      setProfile(profile);
+      const submitInfo = await API.get("treehacks", `/users/${username}/forms/submit_info`);
+      if (submitInfo) {
+        setSubmitInfo(submitInfo);
+      }
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
+  const submitForm = useCallback((data) => {
+    async function submit(e) {
+      setLoading(true);
+      const response = await API.put(
+        "treehacks",
+        `/users/${username}/forms/submit_info`,
+        { body: e }
+      );
+      setSubmitInfo(e);
+      setLoading(false);
+    };
+    submit(data);
+  }, []);
+  if (loading) {
+    return <Loading />;
+  }
+  const defaultSubmitInfo = (profile.first_name && profile.last_name) ? {
+    members: [profile.first_name + " " + profile.last_name]
+  }: {};
+  const submitted = submitInfo.members && submitInfo.members.length && submitInfo.url;
+  return (
+    <div id="submit">
+      <div className="content">
+        <h1>Submit your project here!</h1>
+        <h2>Step 1</h2>
+        <p>
+          Open <a href="https://treehacks-2020.devpost.com" target="_blank">Devpost</a> and make a submission.
             </p>
-          <h2>Step 2</h2>
-          <SubmitForm />
-          <h2>Step 3</h2>
-            <p>
-              Check back on <a href="https://expo.treehacks.com" target="_blank">expo.treehacks.com</a> for your table number!
-            </p>
+        <h2>Step 2</h2>
+        <div class="form">
+          <Form
+            schema={formSchema}
+            uiSchema={uiSchema}
+            showErrorList={false}
+            formData={submitInfo ? submitInfo : defaultSubmitInfo}
+            // onChange={e => setSubmitInfo(e.formData)}
+            onSubmit={e => submitForm(e.formData)}
+            fields={{ "treehacks:multiselect": MultiselectField }}
+          >
+            <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
+          </Form>
         </div>
+        <h2>Step 3</h2>
+        <p>
+          Check back on <a href="https://expo.treehacks.com" target="_blank">expo.treehacks.com</a> for your floor and table number!
+            </p>
       </div>
-    );
-  }
-}
-
-class SubmitForm extends React.Component {
-  async submitForm(e) {
-    const form = { body: e.formData };
-    console.log("Data submitted: ", form);
-    const resp = await API.put(
-      "treehacks",
-      `/users/${this.props.user.username}/forms/meet_info`,
-      form
-    );
-    console.log(resp);
-    this.setState({ redirect: true });
-  }
-
-  render() {
-    return (
-      <div class="form">
-        <Form
-          schema={formSchema}
-          uiSchema={uiSchema}
-          onChange={log("changed")}
-          onSubmit={e => this.submitForm(e)}
-          onError={log("errors")}
-        />
-      </div>
-    );
-  }
-}
-
-class NameInput extends React.Component {
-  render() {
-    return (
-      <input type="text" name="names"></input>
-    );
-  }
-}
-
-class LinkInput extends React.Component {
-  render() {
-    return (
-      <input type="text" name="link"></input>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default Submit;

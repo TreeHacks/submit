@@ -6,6 +6,7 @@ import * as serviceWorker from './js/serviceWorker';
 import logo from "./svg/logo.svg";
 import API from "@aws-amplify/api";
 import queryString from "query-string";
+import Loading from './js/Loading';
 
 const LOGIN_URL = process.env.REACT_APP_LOGIN_URL;
 const ENDPOINT_URL = process.env.REACT_APP_ENDPOINT_URL;
@@ -103,11 +104,12 @@ function Main() {
               </div>
             </a>
           </li>
-          <a href="/">submit</a>
-          <a href="#" onClick={logout}>log out</a>
+          {/* <a href="/">submit</a> */}
+          <a onClick={logout}>log out</a>
         </div>
       </div>
-      <Submit />
+      {!user && <Loading />}
+      {user && <Submit user={user} />}
     </div>
   );
 }

@@ -43,6 +43,10 @@
       margin-top: $small-space;
     }
 
+    textarea {
+      font-family: Arial;
+    }
+
     .form-control,
     .field-array {
       background-color: $box-color;
@@ -65,4 +69,10 @@
       }
     }
   }
+}
+
+.error-detail, .text-danger {
+  color: red;
+  list-style-type: none;
+  font-weight: bold;
 }
