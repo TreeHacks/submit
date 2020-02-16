@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from "react-jsonschema-form";
+import API from "@aws-amplify/api";
 
 const formSchema = {
   required: [],
@@ -13,13 +14,13 @@ const formSchema = {
 
 const uiSchema = {
   teamnames: {
-    "ui:widget": "textarea",
     "ui:placeholder":
-      "Your team members' names separated by commas"
+      "Your team members' names separated by commas",
+    "ui:widget": "textarea"
   },
   link: {
     "ui:placeholder":
-      "Link to devpost project"
+      "Paste link to devpost project"
   }
 };
 
@@ -33,13 +34,13 @@ class Submit extends React.Component {
           <h1>Submit your project here!</h1>
           <h2>Step 1</h2>
             <p>
-              Open <a href="devpost.com">devpost.com</a> and make a submission.
+              Open <a href="https://treehacks-2020.devpost.com" target="_blank">Devpost</a> and make a submission.
             </p>
           <h2>Step 2</h2>
           <SubmitForm />
           <h2>Step 3</h2>
             <p>
-              Check back on <a href="#">something.treehacks.com</a> for your table number!
+              Check back on <a href="https://expo.treehacks.com" target="_blank">expo.treehacks.com</a> for your table number!
             </p>
         </div>
       </div>
@@ -48,6 +49,18 @@ class Submit extends React.Component {
 }
 
 class SubmitForm extends React.Component {
+  async submitForm(e) {
+    const form = { body: e.formData };
+    console.log("Data submitted: ", form);
+    const resp = await API.put(
+      "treehacks",
+      `/users/${this.props.user.username}/forms/meet_info`,
+      form
+    );
+    console.log(resp);
+    this.setState({ redirect: true });
+  }
+
   render() {
     return (
       <div class="form">
