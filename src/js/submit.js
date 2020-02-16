@@ -26,7 +26,7 @@ const formSchema = {
   type: "object",
   properties: {
     members: { type: "array", title: "Team names", items: { type: "string" } },
-    url: { type: "string", format: "url", title: "Devpost Link" },
+    url: { type: "string", title: "Devpost Link" },
   },
   required: ["members", "url"]
 };
