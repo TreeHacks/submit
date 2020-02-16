@@ -7,7 +7,7 @@ import CreatableSelect from "react-select/creatable";
 
 const MultiselectField = ({ formData, uiSchema, onChange }) => {
   return (<>
-    <label>Team names (first and last)</label>
+    <label>Team member names (first and last)</label>
     <CreatableSelect
       isMulti
       placeholder={uiSchema["ui:placeholder"]}
@@ -46,32 +46,46 @@ const Submit = (user) => {
   const [profile, setProfile] = useState(null);
   const [submitInfo, setSubmitInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const profile = await API.get("treehacks", `/user_profile`);
-      setProfile(profile);
-      const submitInfo = await API.get("treehacks", `/users/${username}/forms/submit_info`);
-      if (submitInfo) {
-        setSubmitInfo(submitInfo);
+      try {
+        const profile = await API.get("treehacks", `/user_profile`);
+        const submitInfo = await API.get("treehacks", `/users/${username}/forms/submit_info`);
+        setProfile(profile);
+        if (submitInfo) {
+          setSubmitInfo(submitInfo);
+        }
+      } catch (e) {
+        console.error(e);
+        setError(true);
       }
       setLoading(false);
     }
     fetchData();
   }, []);
   const submitForm = useCallback((data) => {
-    async function submit(e) {
+    async function submit(body) {
       setLoading(true);
-      const response = await API.put(
-        "treehacks",
-        `/users/${username}/forms/submit_info`,
-        { body: e }
-      );
-      setSubmitInfo(e);
+      try {
+        await API.put(
+          "treehacks",
+          `/users/${username}/forms/submit_info`,
+          { body: body }
+        );
+        setSubmitInfo(body);
+      } catch(e) {
+        console.error(e);
+        alert("Sorry, there was an error submitting.");
+      }
       setLoading(false);
     };
     submit(data);
   }, []);
+  if (error) {
+    return <div>Sorry, there was an error.</div>;
+  }
   if (loading) {
     return <Loading />;
   }
