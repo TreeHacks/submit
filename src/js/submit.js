@@ -84,7 +84,7 @@ const Submit = (user) => {
     submit(data);
   }, []);
   if (error) {
-    return <div>Sorry, there was an error.</div>;
+    return <div id="submit"><div className="content">Sorry, there was an error.</div></div>;
   }
   if (loading) {
     return <Loading />;
