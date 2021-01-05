@@ -1,0 +1,21 @@
+@import "default.scss";
+// Proxima Nova font
+@import url("https://use.typekit.net/vam8uoe.css");
+
+/* Color Palette */
+$background-color: hsl(339, 77%, 99%);
+$background-color-light-border: #eeeeee;
+
+$primary-color-light: #d3ffdb;
+$primary-color-main: #21ce99;
+$primary-color: #0d9071;
+$primary-color-dark: #1c413a;
+$secondary-color: #e83028;
+$tertiary-color: #ff730e;
+
+$text-color: #696e76;
+$secondary-text-color: #535152;
+$primary-btn-text-color: #ffffff;
+
+$font-size: 18px;
+$base-font-family: proxima-nova, sans-serif;
