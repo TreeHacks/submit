@@ -4,10 +4,57 @@ import API from "@aws-amplify/api";
 import { useState, useEffect } from 'react';
 import Loading from './Loading';
 import CreatableSelect from "react-select/creatable";
+import Select from "react-select";
+import { CHALLENGE_OPTIONS, PRIZE_OPTIONS } from "./constants";
 
 const MultiselectField = ({ formData, uiSchema, onChange }) => {
   return (<>
     <label>Team member names (first and last)</label>
+    <CreatableSelect
+      isMulti
+      placeholder={uiSchema["ui:placeholder"]}
+      onChange={e => onChange((e || []).map(item => item.value))}
+      value={(formData || []).map(e => ({ value: e, label: e }))}
+      options={[]}
+      formatCreateLabel={e => `${e}`}
+      noOptionsMessage={() => null}
+    />
+  </>);
+}
+
+const ChallengeMultiSelect = ({ formData, uiSchema, onChange }) => {
+  return (<>
+    <label>Applicable Challenges (optional)</label>
+    <Select
+      isMulti
+      placeholder={uiSchema["ui:placeholder"]}
+      onChange={e => onChange((e || []).map(item => item.value))}
+      value={(formData || []).map(e => ({ value: e, label: e }))}
+      options={CHALLENGE_OPTIONS}
+      formatCreateLabel={e => `${e}`}
+      noOptionsMessage={() => null}
+    />
+  </>);
+}
+
+const PrizeMultiSelect = ({ formData, uiSchema, onChange }) => {
+  return (<>
+    <label>Applicable Sponsor Prizes (optional)</label>
+    <Select
+      isMulti
+      placeholder={uiSchema["ui:placeholder"]}
+      onChange={e => onChange((e || []).map(item => item.value))}
+      value={(formData || []).map(e => ({ value: e, label: e }))}
+      options={PRIZE_OPTIONS}
+      formatCreateLabel={e => `${e}`}
+      noOptionsMessage={() => null}
+    />
+  </>);
+}
+
+const TechMultiSelect = ({ formData, uiSchema, onChange }) => {
+  return (<>
+    <label>Technologies Used (optional)</label>
     <CreatableSelect
       isMulti
       placeholder={uiSchema["ui:placeholder"]}
@@ -25,14 +72,39 @@ const formSchema = {
   title: "Fill out project info:",
   type: "object",
   properties: {
+    name: { type: "string", title: "Project name" },
+    description: { type: "string", title: "Project description" },
     members: { type: "array", title: "Team names", items: { type: "string" } },
-    url: { type: "string", title: "Devpost Link" },
+    challenges: { type: "array", title: "Challenges", items: { type: "string" } },
+    prizes: { type: "array", title: "Prizes", items: { type: "string" } },
+    technologies: { type: "array", title: "Prizes", items: { type: "string" } },
+    // url: { type: "string", title: "Devpost Link" },
   },
   required: ["members", "url"]
 };
 
 const uiSchema = {
+  name: {
+    "ui:placeholder":
+        "Project name"
+  },
+  description: {
+    "ui:widget": "textarea",
+    "ui:placeholder":
+        "Project description (<= 5 sentences is okay!)"
+  },
+  challenges: {
+    "ui:field": "treehacks:challengeselect"
+  },
+  prizes: {
+    "ui:field": "treehacks:prizeselect"
+  },
+  technologies: {
+    "ui:placeholder": "Select or type...",
+    "ui:field": "treehacks:techselect"
+  },
   members: {
+    "ui:placeholder": "Select or type...",
     "ui:field": "treehacks:multiselect"
   },
   url: {
@@ -110,7 +182,10 @@ const Submit = (user) => {
             formData={submitted ? submitInfo : defaultSubmitInfo}
             // onChange={e => setSubmitInfo(e.formData)}
             onSubmit={e => submitForm(e.formData)}
-            fields={{ "treehacks:multiselect": MultiselectField }}
+            fields={{ "treehacks:multiselect": MultiselectField, 
+                      "treehacks:challengeselect": ChallengeMultiSelect,
+                      "treehacks:prizeselect": PrizeMultiSelect,
+                      "treehacks:techselect": TechMultiSelect  }}
           >
             <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
           </Form>
