@@ -168,12 +168,7 @@ const Submit = (user) => {
   return (
     <div id="submit">
       <div className="content">
-        <h1>Submit your project here!</h1>
-        <h2>Step 1</h2>
-        <p>
-          Open <a href="https://treehacks-2020.devpost.com" target="_blank">Devpost</a> and make a submission.
-            </p>
-        <h2>Step 2</h2>
+        <h1>Register your project here!</h1>
         <div class="form">
           <Form
             schema={formSchema}
@@ -190,10 +185,6 @@ const Submit = (user) => {
             <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
           </Form>
         </div>
-        <h2>Step 3</h2>
-        <p>
-          Check back on <a href="https://expo.treehacks.com" target="_blank">expo.treehacks.com</a> for your floor and table number!
-            </p>
       </div>
     </div>
   );
