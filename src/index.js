@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import Submit from './js/submit';
+import TeamSelect from "./js/teamselect";
 import * as serviceWorker from './js/serviceWorker';
 import logo from "./svg/logo.svg";
 import API from "@aws-amplify/api";

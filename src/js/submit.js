@@ -74,13 +74,13 @@ const formSchema = {
   properties: {
     name: { type: "string", title: "Project name" },
     description: { type: "string", title: "Project description" },
-    members: { type: "array", title: "Team names", items: { type: "string" } },
+    //members: { type: "array", title: "Team names", items: { type: "string" } },
     challenges: { type: "array", title: "Challenges", items: { type: "string" } },
     prizes: { type: "array", title: "Prizes", items: { type: "string" } },
     technologies: { type: "array", title: "Prizes", items: { type: "string" } },
     // url: { type: "string", title: "Devpost Link" },
   },
-  required: ["members", "url"]
+  //required: ["members", "url"]
 };
 
 const uiSchema = {
@@ -168,22 +168,27 @@ const Submit = (user) => {
   return (
     <div id="submit">
       <div className="content">
-        <h1>Register your project here!</h1>
-        <div class="form">
-          <Form
-            schema={formSchema}
-            uiSchema={uiSchema}
-            showErrorList={false}
-            formData={submitted ? submitInfo : defaultSubmitInfo}
-            // onChange={e => setSubmitInfo(e.formData)}
-            onSubmit={e => submitForm(e.formData)}
-            fields={{ "treehacks:multiselect": MultiselectField, 
-                      "treehacks:challengeselect": ChallengeMultiSelect,
-                      "treehacks:prizeselect": PrizeMultiSelect,
-                      "treehacks:techselect": TechMultiSelect  }}
-          >
-            <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
-          </Form>
+        <div>
+          <div>
+            <h2>Team Members</h2>
+          </div>
+          <h2>Project Details</h2>
+          <div class="form">
+            <Form
+              schema={formSchema}
+              uiSchema={uiSchema}
+              showErrorList={false}
+              formData={submitted ? submitInfo : defaultSubmitInfo}
+              // onChange={e => setSubmitInfo(e.formData)}
+              onSubmit={e => submitForm(e.formData)}
+              fields={{ "treehacks:multiselect": MultiselectField, 
+                        "treehacks:challengeselect": ChallengeMultiSelect,
+                        "treehacks:prizeselect": PrizeMultiSelect,
+                        "treehacks:techselect": TechMultiSelect  }}
+            >
+              <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
+            </Form>
+          </div>
         </div>
       </div>
     </div>
