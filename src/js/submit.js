@@ -78,6 +78,8 @@ const formSchema = {
     challenges: { type: "array", title: "Challenges", items: { type: "string" } },
     prizes: { type: "array", title: "Prizes", items: { type: "string" } },
     technologies: { type: "array", title: "Prizes", items: { type: "string" } },
+    open: { type: "boolean", title: "I'm open to people dropping by" },
+    roomLink: { type: "string", title: "Room link" },
     // url: { type: "string", title: "Devpost Link" },
   },
   //required: ["members", "url"]
@@ -107,16 +109,26 @@ const uiSchema = {
     "ui:placeholder": "Select or type...",
     "ui:field": "treehacks:multiselect"
   },
+  open: {
+    "ui:placeholder":
+      "I'm open to people dropping by!"
+  },
+  roomLink: {
+    "ui:placeholder":
+      "Room link"
+  }
+  /*
   url: {
     "ui:placeholder":
       "Paste link to Devpost project"
   }
+  */
 };
 
-const Submit = (user) => {
+const Submit = ({ user, setTeam }) => {
   const username = user.user.username;
   const [profile, setProfile] = useState(null);
-  const [submitInfo, setSubmitInfo] = useState(null);
+  const [teamInfo, setTeamInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   useEffect(() => {
@@ -124,10 +136,10 @@ const Submit = (user) => {
       setLoading(true);
       try {
         const profile = await API.get("treehacks", `/user_profile`);
-        const submitInfo = await API.get("treehacks", `/users/${username}/forms/submit_info`);
+        const teamInfo = await API.get("treehacks", `/users/${username}/teams/team`);
         setProfile(profile);
-        if (submitInfo) {
-          setSubmitInfo(submitInfo);
+        if (teamInfo) {
+          setTeamInfo(teamInfo.data);
         }
       } catch (e) {
         console.error(e);
@@ -143,10 +155,10 @@ const Submit = (user) => {
       try {
         await API.put(
           "treehacks",
-          `/users/${username}/forms/submit_info`,
+          `/users/${username}/teams/team`,
           { body: body }
         );
-        setSubmitInfo(body);
+        setTeamInfo(body);
       } catch(e) {
         console.error(e);
         alert("Sorry, there was an error submitting.");
@@ -155,22 +167,34 @@ const Submit = (user) => {
     };
     submit(data);
   }, []);
+  async function leaveTeam() {
+    setLoading(true);
+      try {
+        await API.post(
+          "treehacks",
+          `/users/${username}/teams/leave`,
+        );
+        setLoading(false);
+        setTeam(null);
+      } catch(e) {
+        console.error(e);
+        alert("Sorry, there was an error submitting.");
+      }
+      setLoading(false);
+  }
   if (error) {
     return <div id="submit"><div className="content">Sorry, there was an error.</div></div>;
   }
   if (loading) {
     return <Loading />;
   }
-  const defaultSubmitInfo = (profile && profile.first_name && profile.last_name) ? {
-    members: [profile.first_name + " " + profile.last_name]
-  }: {};
-  const submitted = submitInfo && submitInfo.members && submitInfo.members.length && submitInfo.url;
   return (
     <div id="submit">
       <div className="content">
         <div>
           <div>
-            <h2>Team Members</h2>
+            <h2>Team Code: {teamInfo.code}</h2>
+            <button className="btn btn-danger" onClick={leaveTeam}>Leave Team</button>
           </div>
           <h2>Project Details</h2>
           <div class="form">
@@ -178,15 +202,15 @@ const Submit = (user) => {
               schema={formSchema}
               uiSchema={uiSchema}
               showErrorList={false}
-              formData={submitted ? submitInfo : defaultSubmitInfo}
-              // onChange={e => setSubmitInfo(e.formData)}
+              formData={teamInfo}
+              // onChange={e => setTeamInfo(e.formData)}
               onSubmit={e => submitForm(e.formData)}
               fields={{ "treehacks:multiselect": MultiselectField, 
                         "treehacks:challengeselect": ChallengeMultiSelect,
                         "treehacks:prizeselect": PrizeMultiSelect,
                         "treehacks:techselect": TechMultiSelect  }}
             >
-              <button type="submit" className="btn btn-info">{submitted ? "You've already submitted! Click here to update your submission." : "Submit"}</button>
+              <button type="submit" className="btn btn-info">Submit</button>
             </Form>
           </div>
         </div>

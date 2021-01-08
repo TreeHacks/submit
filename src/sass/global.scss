@@ -18,3 +18,10 @@
     transform: scale($transform-scale);
   }
 }
+
+.btn-danger {
+  background-color: $secondary-color;
+  &:hover {
+    background-color: $secondary-color;
+  }
+}

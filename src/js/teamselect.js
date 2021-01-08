@@ -22,43 +22,23 @@ const uiSchema = {
     },
 };
 
-const TeamSelect = (user) => {
+const TeamSelect = ({ user, setTeam }) => {
     const username = user.user.username;
     const [profile, setProfile] = useState(null);
     const [submitInfo, setSubmitInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
-    useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
-            try {
-                const profile = await API.get("treehacks", `/user_profile`);
-                const submitInfo = await API.get(
-                    "treehacks",
-                    `/users/${username}/forms/submit_info`
-                );
-                setProfile(profile);
-                if (submitInfo) {
-                    setSubmitInfo(submitInfo);
-                }
-            } catch (e) {
-                console.error(e);
-                setError(true);
-            }
-            setLoading(false);
-        }
-        fetchData();
-    }, []);
     const submitForm = useCallback((data) => {
         async function submit(body) {
             setLoading(true);
             try {
-                await API.put(
+                const data = await API.post(
                     "treehacks",
-                    `/users/${username}/forms/submit_info`,
+                    `/users/${username}/teams/join`,
                     { body: body }
                 );
-                setSubmitInfo(body);
+                setLoading(false);
+                setTeam(data.data);
             } catch (e) {
                 console.error(e);
                 alert("Sorry, there was an error submitting.");
@@ -67,33 +47,36 @@ const TeamSelect = (user) => {
         }
         submit(data);
     }, []);
-    if (error) {
-        return (
-            <div id="submit">
-                <div className="content">Sorry, there was an error.</div>
-            </div>
-        );
+    async function createTeam(username, setTeam) {
+        setLoading(true);
+        try {
+            const data = await API.post(
+                "treehacks",
+                `/users/${username}/teams/create`
+            );
+            setLoading(false);
+            setTeam(data.data);
+        } catch (e) {
+            console.error(e);
+            alert("Sorry, there was an error submitting.");
+        }
+        setLoading(false);
     }
+
     if (loading) {
         return <Loading />;
     }
-    const defaultSubmitInfo =
-        profile && profile.first_name && profile.last_name
-            ? {
-                  members: [profile.first_name + " " + profile.last_name],
-              }
-            : {};
-    const submitted =
-        submitInfo &&
-        submitInfo.members &&
-        submitInfo.members.length &&
-        submitInfo.url;
     return (
         <div id="submit">
             <div className="content">
                 <div className="section">
                     <h2>Create Team</h2>
-                    <button className="btn btn-info">Create</button>
+                    <button
+                        className="btn btn-info"
+                        onClick={() => createTeam(username, setTeam)}
+                    >
+                        Create
+                    </button>
                 </div>
                 <div>or</div>
                 <div className="section">
@@ -103,16 +86,11 @@ const TeamSelect = (user) => {
                             schema={formSchema}
                             uiSchema={uiSchema}
                             showErrorList={false}
-                            formData={
-                                submitted ? submitInfo : defaultSubmitInfo
-                            }
                             // onChange={e => setSubmitInfo(e.formData)}
                             onSubmit={(e) => submitForm(e.formData)}
                         >
                             <button type="submit" className="btn btn-info">
-                                {submitted
-                                    ? "You've already submitted! Click here to update your submission."
-                                    : "Submit"}
+                                Submit
                             </button>
                         </Form>
                     </div>

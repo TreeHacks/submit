@@ -8,6 +8,7 @@ import logo from "./svg/logo.svg";
 import API from "@aws-amplify/api";
 import queryString from "query-string";
 import Loading from './js/Loading';
+import Container from './js/container';
 
 const LOGIN_URL = process.env.REACT_APP_LOGIN_URL;
 const ENDPOINT_URL = process.env.REACT_APP_ENDPOINT_URL;
@@ -110,7 +111,7 @@ function Main() {
         </div>
       </div>
       {!user && <Loading />}
-      {user && <Submit user={user} />}
+      {user && <Container user={user} />}
     </div>
   );
 }
